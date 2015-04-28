@@ -1,3 +1,10 @@
+# pycharm and project files
+.idea/
+xpy-bookmark-tools_project-info/
+run.lnk
+application/static/libs/
+*.sqlite
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
