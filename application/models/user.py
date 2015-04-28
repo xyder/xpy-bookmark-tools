@@ -1,5 +1,14 @@
 from werkzeug.security import generate_password_hash
+from wtforms import validators
+from wtforms.widgets import TextInput, PasswordInput
 from application import db
+
+
+class CustomTextWidget(TextInput):
+    def __call__(self, *args, **kwargs):
+        if 'autocomplete' not in kwargs:
+            kwargs['autocomplete'] = 'off'
+        return super(CustomTextWidget, self).__call__(*args, **kwargs)
 
 
 class User(db.Model):
@@ -38,6 +47,34 @@ class User(db.Model):
     # Required for administrative interface
     def __unicode__(self):
         return self.username
+
+    @staticmethod
+    def get_field_args_login():
+        """
+        Gets the field arguments for the automatic form creation.
+        """
+
+        return {
+            User.username.key: {'widget': CustomTextWidget(), 'label': 'Username',
+                                'validators': [validators.DataRequired()]},
+            User.password.key: {'widget': PasswordInput(), 'label': 'Password',
+                                'validators': [validators.DataRequired()]}
+        }
+
+    @staticmethod
+    def get_field_args_create():
+        """
+        Gets the field arguments for the automatic form creation.
+        """
+        return {
+            User.first_name.key: {'widget': CustomTextWidget(), 'label': 'First Name'},
+            User.last_name.key: {'widget': CustomTextWidget(), 'label': 'Last Name'},
+            User.username.key: {'widget': CustomTextWidget(), 'label': 'Username',
+                                'validators': [validators.DataRequired()]},
+            User.password.key: {'widget': PasswordInput(), 'label': 'Password',
+                                'validators': [validators.DataRequired(),
+                                               validators.EqualTo('confirm', message='Password must match.')]}
+        }
 
     @property
     def get_full_name(self):

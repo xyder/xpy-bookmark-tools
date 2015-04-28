@@ -1,1 +1,1 @@
-from .flask_views import IndexView
+from . import admin_views, main_views, forms

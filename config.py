@@ -20,6 +20,9 @@ class AppConfig(object):
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(PathsConfig.BASE_DIR, 'data.sqlite')
 
+    WTF_CSRF_ENABLED = False
+    SECRET_KEY = "this is a secret key"
+
     APP_NAME = 'XPy Bookmark Tools'
 
 

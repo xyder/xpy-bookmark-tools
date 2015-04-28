@@ -4,8 +4,6 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
 from config import ActiveConfig
-from .views import IndexView
-
 
 # initialize and configure the flask server
 app = Flask(__name__)
@@ -18,13 +16,15 @@ if not app.debug:
 # open and intialize or read the database
 db = SQLAlchemy(app)
 
-from application import models
-from application.initializers import init_db
+from application import models, views
+from application.utils.initializers import init_db, init_admin, init_login
 
 init_db(db)
+init_admin(app, db)
+init_login(app)
 
 # register views
-app.add_url_rule('/', view_func=IndexView.as_view('index'))
+app.add_url_rule('/', view_func=views.main_views.IndexView.as_view('index'))
 
 
 def main():
