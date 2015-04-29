@@ -2,10 +2,37 @@ from flask.ext.wtf import Form
 from werkzeug.security import check_password_hash
 from wtforms import validators, PasswordField
 from wtforms.ext.sqlalchemy.orm import model_form
+from application import db
 from application.models import User
 
 
-class LoginForm(model_form(User, base_class=Form, exclude=['first_name', 'last_name'],
+class BaseForm(Form):
+    """
+    Base class for forms.
+    """
+
+    def __init__(self, *args, **kwargs):
+        field_order = getattr(self, 'field_order', None)
+
+        # re-order the fields in the order specified
+        if field_order:
+            temp_fields = []
+
+            for name in field_order:
+                if name == '*':
+                    # all fields not specified
+                    temp_fields.extend([f for f in self._unbound_fields if f[0] not in field_order])
+                else:
+                    # all fields specified
+                    temp_fields.append([f for f in self._unbound_fields if f[0] == name][0])
+            self._unbound_fields = temp_fields
+        super(BaseForm, self).__init__(*args, **kwargs)
+
+
+class LoginForm(model_form(User,
+                           base_class=BaseForm,
+                           db_session=db.session,
+                           exclude=['first_name', 'last_name', 'access_level'],
                            field_args=User.get_field_args_login())):
     """
     Class representing the form handling authentication in the admin area.
@@ -33,25 +60,44 @@ class LoginForm(model_form(User, base_class=Form, exclude=['first_name', 'last_n
         return User.query.filter_by(username=self.username.data).first()
 
 
-class UserEditForm(model_form(User, base_class=Form, field_args=User.get_field_args_create())):
+class UserEditForm(model_form(User,
+                              base_class=BaseForm,
+                              db_session=db.session,
+                              field_args=User.get_field_args(True))):
     """
     Class representing the form handling the user editing from the admin area.
     """
 
     confirm = PasswordField('Repeat Password')
+    field_order = ('first_name', 'last_name', 'access_level', 'username', 'password', 'confirm', '*')
+
+    def __init__(self, obj=None, *args, **kwargs):
+
+        # store the object id
+        self.id = obj.id if obj else None
+
+        super(UserEditForm, self).__init__(obj=obj, *args, **kwargs)
 
     def get_user(self):
         return User.query.filter_by(username=self.username.data).first()
-
-
-class UserCreateForm(UserEditForm):
-    """
-    Class representing the form handling the user creating from the admin area.
-    """
 
     def validate_username(self, field):
         del field
 
         user = self.get_user()
-        if user is not None:
+        if user is None:
+            return
+
+        # if not true, username was changed
+        if not (self.id and user.username == User.query.get(self.id).username):
             raise validators.ValidationError('Username already exists.')
+
+
+class UserCreateForm(model_form(User,
+                                base_class=UserEditForm,
+                                db_session=db.session,
+                                field_args=User.get_field_args())):
+    """
+    Class representing the form handling the user creating from the admin area.
+    """
+    pass

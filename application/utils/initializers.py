@@ -61,3 +61,4 @@ def init_admin(app, db):
     admin = Admin(app, ActiveConfig.APP_NAME, index_view=views.admin_views.AdminMainView())
 
     admin.add_view(views.admin_views.AdminUserModelView(models.User, db.session, name='Users'))
+    admin.add_view(views.admin_views.AdminModelView(models.AccessLevel, db.session, name='Access Levels'))
