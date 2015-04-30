@@ -14,6 +14,7 @@ def init_db(db):
     db.create_all()
 
     default_title = 'Administrator'
+    # add the default title if missing
     if models.AccessLevel.query.filter_by(title=default_title).first() is None:
         default_level = models.AccessLevel(default_title)
         db.session.add(default_level)
@@ -21,14 +22,16 @@ def init_db(db):
 
     admin_id = models.AccessLevel.query.filter_by(title=default_title).first().id
 
-    # will append a default user if no administrator user exists
+    # will create a default user if no administrator user exists
     if models.User.query.filter_by(access_level_id=admin_id).first() is None:
         default_user = models.User.query.filter_by(username='admin').first()
 
         if default_user is None:
+            # create user 'admin' if it doesn't exist
             default_user = models.User('admin', 'password', 'John', 'Smith', admin_id)
             db.session.add(default_user)
         else:
+            # change access level to default administrator level
             default_user.access_level_id = admin_id
         db.session.commit()
 
@@ -60,5 +63,11 @@ def init_admin(app, db):
 
     admin = Admin(app, ActiveConfig.APP_NAME, index_view=views.admin_views.AdminMainView())
 
+    # register admin views
     admin.add_view(views.admin_views.AdminUserModelView(models.User, db.session, name='Users'))
     admin.add_view(views.admin_views.AdminModelView(models.AccessLevel, db.session, name='Access Levels'))
+
+
+def init_app(app):
+    # register views
+    app.add_url_rule('/', view_func=views.main_views.IndexView.as_view('index'))

@@ -1,14 +1,9 @@
 from werkzeug.security import generate_password_hash
 from wtforms import validators
-from wtforms.widgets import TextInput, PasswordInput, Select
+from wtforms.widgets import PasswordInput, Select
+
 from application import db
-
-
-class CustomTextWidget(TextInput):
-    def __call__(self, *args, **kwargs):
-        if 'autocomplete' not in kwargs:
-            kwargs['autocomplete'] = 'off'
-        return super(CustomTextWidget, self).__call__(*args, **kwargs)
+from . import CustomTextWidget
 
 
 class User(db.Model):

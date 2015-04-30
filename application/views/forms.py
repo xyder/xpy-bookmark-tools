@@ -2,8 +2,8 @@ from flask.ext.wtf import Form
 from werkzeug.security import check_password_hash
 from wtforms import validators, PasswordField
 from wtforms.ext.sqlalchemy.orm import model_form
-from application import db
-from application.models import User
+
+from application import db, models
 
 
 class BaseForm(Form):
@@ -29,11 +29,11 @@ class BaseForm(Form):
         super(BaseForm, self).__init__(*args, **kwargs)
 
 
-class LoginForm(model_form(User,
+class LoginForm(model_form(models.User,
                            base_class=BaseForm,
                            db_session=db.session,
                            exclude=['first_name', 'last_name', 'access_level'],
-                           field_args=User.get_field_args_login())):
+                           field_args=models.User.get_field_args_login())):
     """
     Class representing the form handling authentication in the admin area.
     """
@@ -57,13 +57,13 @@ class LoginForm(model_form(User,
             raise validators.ValidationError('Password is invalid.')
 
     def get_user(self):
-        return User.query.filter_by(username=self.username.data).first()
+        return models.User.query.filter_by(username=self.username.data).first()
 
 
-class UserEditForm(model_form(User,
+class UserEditForm(model_form(models.User,
                               base_class=BaseForm,
                               db_session=db.session,
-                              field_args=User.get_field_args(True))):
+                              field_args=models.User.get_field_args(True))):
     """
     Class representing the form handling the user editing from the admin area.
     """
@@ -79,7 +79,7 @@ class UserEditForm(model_form(User,
         super(UserEditForm, self).__init__(obj=obj, *args, **kwargs)
 
     def get_user(self):
-        return User.query.filter_by(username=self.username.data).first()
+        return models.User.query.filter_by(username=self.username.data).first()
 
     def validate_username(self, field):
         del field
@@ -89,14 +89,14 @@ class UserEditForm(model_form(User,
             return
 
         # if not true, username was changed
-        if not (self.id and user.username == User.query.get(self.id).username):
+        if not (self.id and user.username == models.User.query.get(self.id).username):
             raise validators.ValidationError('Username already exists.')
 
 
-class UserCreateForm(model_form(User,
+class UserCreateForm(model_form(models.User,
                                 base_class=UserEditForm,
                                 db_session=db.session,
-                                field_args=User.get_field_args())):
+                                field_args=models.User.get_field_args())):
     """
     Class representing the form handling the user creating from the admin area.
     """

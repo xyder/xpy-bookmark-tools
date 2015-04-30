@@ -1,5 +1,4 @@
 import logging
-
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
@@ -17,14 +16,12 @@ if not app.debug:
 db = SQLAlchemy(app)
 
 from application import models, views
-from application.utils.initializers import init_db, init_admin, init_login
+from application.utils.initializers import init_db, init_admin, init_login, init_app
 
+init_app(app)
 init_db(db)
 init_admin(app, db)
 init_login(app)
-
-# register views
-app.add_url_rule('/', view_func=views.main_views.IndexView.as_view('index'))
 
 
 def main():

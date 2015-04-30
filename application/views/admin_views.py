@@ -1,22 +1,10 @@
-from flask import flash, request, redirect, url_for
+from flask import request, redirect, url_for
 from flask.ext.admin import expose, AdminIndexView, helpers
 from flask.ext.admin.contrib.sqla import ModelView
 import flask.ext.login as login
 from werkzeug.security import generate_password_hash
-from application import utils
-from . import forms
 
-
-def check_errors():
-    """
-    Checks if there are any application level errors.
-
-    :return: True if there are errors.
-    """
-
-    # true when ('admin','password') is present
-    if utils.Authentication.check_authorization('admin', 'password'):
-        flash('Warning: Change default login info to something unique to prevent a potential security risk.')
+from . import forms, check_errors
 
 
 class AdminMainView(AdminIndexView):
