@@ -15,14 +15,11 @@ if not app.debug:
 # open and intialize or read the database
 db = SQLAlchemy(app)
 
-from application import models, views
-from application.utils.initializers import init_db, init_admin, init_login, init_app
-
-init_app(app)
-init_db(db)
-init_admin(app, db)
-init_login(app)
-
 
 def main():
+    from application.utils.initializers import init_db, init_admin, init_login, init_app
+    init_app(app)
+    init_db(db)
+    init_admin(app, db)
+    init_login(app)
     app.run(use_reloader=False)
