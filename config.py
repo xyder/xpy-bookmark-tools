@@ -8,6 +8,14 @@ class PathsConfig(object):
     BASE_DIR = os.path.dirname(os.path.realpath(__file__))
     APP_DIR = os.path.join(BASE_DIR, 'application')
     STATIC_DIR = os.path.join(APP_DIR, 'static')
+    DATABASES_DIR = os.path.join(BASE_DIR, 'databases')
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'imported_files')
+    ALLOWED_FILES = ['places.sqlite']
+    ALLOWED_EXTENSIONS = ['html']
+
+    @staticmethod
+    def get_db_path(file, db_dir=DATABASES_DIR):
+        return 'sqlite:///' + os.path.join(db_dir, file)
 
 
 class AppConfig(object):
@@ -18,7 +26,7 @@ class AppConfig(object):
     SERVER_HOST = "127.0.0.1:"
     DEBUG = False
 
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(PathsConfig.BASE_DIR, 'data.sqlite')
+    SQLALCHEMY_DATABASE_URI = PathsConfig.get_db_path('data.sqlite')
 
     WTF_CSRF_ENABLED = False
     SECRET_KEY = "this is a secret key"
@@ -55,7 +63,7 @@ class TestingConfig(DevConfig):
     """
 
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(PathsConfig.BASE_DIR, 'test.sqlite')
+    SQLALCHEMY_DATABASE_URI = PathsConfig.get_db_path('test.sqlite')
 
 
 class ActiveConfig(GenericConfig):

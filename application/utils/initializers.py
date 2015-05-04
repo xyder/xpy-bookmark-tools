@@ -1,14 +1,18 @@
+import os
 from flask.ext.admin import Admin
 from flask.ext.login import LoginManager
 
 from application import views, models
-from config import ActiveConfig
+from config import ActiveConfig, PathsConfig
 
 
 def init_db(db):
     """
     Initializes data in the database if necessary.
     """
+
+    # will create directory if not exist
+    os.makedirs(PathsConfig.DATABASES_DIR, exist_ok=True)
 
     # will create database and tables if not exist
     db.create_all()
@@ -64,8 +68,17 @@ def init_admin(app, db):
     admin = Admin(app, ActiveConfig.APP_NAME, index_view=views.admin_views.AdminMainView())
 
     # register admin views
-    admin.add_view(views.admin_views.AdminUserModelView(models.User, db.session, name='Users'))
-    admin.add_view(views.admin_views.AdminModelView(models.AccessLevel, db.session, name='Access Levels'))
+    admin.add_view(views.admin_views.AdminUserModelView(models.User,
+                                                        db.session,
+                                                        name='Users',
+                                                        endpoint='users'))
+    admin.add_view(views.admin_views.AdminModelView(models.AccessLevel,
+                                                    db.session,
+                                                    name='Access Levels',
+                                                    endpoint='access-levels'))
+    admin.add_view(views.admin_views.AdminFileManagerView(name='File Manager',
+                                                          endpoint='file-manager',
+                                                          template='admin/file_manager.html'))
 
 
 def init_app(app):

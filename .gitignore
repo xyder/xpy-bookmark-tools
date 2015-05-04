@@ -4,6 +4,8 @@ xpy-bookmark-tools_project-info/
 run.lnk
 application/static/libs/
 tests/tmp/
+databases/
+imported_files/
 *.sqlite
 
 # Byte-compiled / optimized / DLL files
