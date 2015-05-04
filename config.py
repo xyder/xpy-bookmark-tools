@@ -26,9 +26,9 @@ class AppConfig(object):
     APP_NAME = 'XPy Bookmark Tools'
 
 
-class TestingConfig(AppConfig):
+class DevConfig(AppConfig):
     """
-    Class containing testing environment constants
+    Class containing development environment constants
     """
     SERVER_PORT = 3000
     DEBUG = True
@@ -41,13 +41,21 @@ class ProductionConfig(AppConfig):
     SERVER_PORT = 80
 
 
-# class renaming to quickly switch between configurations
-class GenericConfig(TestingConfig):
+class GenericConfig(DevConfig):
     """
-    Class used as a buffer between the testing and the production classes for
-    easy switching between the two
+    Class base for the active configuration. Change inheritance to quickly change application
+    configurations.
     """
     pass
+
+
+class TestingConfig(DevConfig):
+    """
+    Class containing constants for automatic testing.
+    """
+
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(PathsConfig.BASE_DIR, 'test.sqlite')
 
 
 class ActiveConfig(GenericConfig):

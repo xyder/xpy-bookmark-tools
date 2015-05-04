@@ -1,10 +1,8 @@
-import os
 import unittest
 from werkzeug.security import check_password_hash
 
 from application.utils.initializers import init_db
-from config import ActiveConfig, PathsConfig
-
+from config import TestingConfig
 
 from application import db, app, models
 
@@ -19,9 +17,7 @@ class DatabaseTests(unittest.TestCase):
         Set the Test Unit up
         """
 
-        ActiveConfig.TESTING = True
-        ActiveConfig.SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(PathsConfig.BASE_DIR, 'test.sqlite')
-        app.config.from_object(ActiveConfig)
+        app.config.from_object(TestingConfig)
         db.session.close()
 
     def test_init_db(self):
