@@ -15,7 +15,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for file in file_list %}
+        {% for file in params.file_list %}
             <tr>
                 <td>
                     <form class="icon" action="delete" method="POST">
@@ -23,6 +23,18 @@
                         <button title="Delete file" onclick="return confirm('Are you sure you want to delete this file?')">
                             <i class="icon-remove"></i>
                         </button>
+                    </form>
+                    <form class="icon" action="" method="POST">
+                        <input id="filename" type="hidden" value="{{ file }}" name="filename">
+                        {% if params.selected_file[0] == file %}
+                        <button title="Select file">
+                            <i class="icon-stop"></i>
+                        </button>
+                        {% else %}
+                        <button title="Deselect file">
+                            <i class="icon-play"></i>
+                        </button>
+                        {% endif %}
                     </form>
                 </td>
                 <td>
@@ -32,4 +44,5 @@
         {% endfor %}
         </tbody>
     </table>
+    {{ params.selected_file[1] }}
 {% endblock %}
