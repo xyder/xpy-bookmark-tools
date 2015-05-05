@@ -147,7 +147,7 @@ class AdminFileManagerView(AdminView):
         if os.path.isfile(file_path):
             # insert a random number to make the file name unique
             filename_parts = filename.rsplit('.', 1)
-            filename = filename_parts[0] + ' - %08d.' % random.randint(0, 99999999) + filename_parts[1]
+            filename = filename_parts[0] + '_-_%08d.' % random.randint(0, 99999999) + filename_parts[1]
 
             flash('File name already exists. New name generated: "' + filename + '".')
             file_path = os.path.join(PathsConfig.UPLOAD_FOLDER, filename)
@@ -155,8 +155,8 @@ class AdminFileManagerView(AdminView):
         os.makedirs(PathsConfig.UPLOAD_FOLDER, exist_ok=True)
         file.save(file_path)
 
-    @expose('/', methods=['POST'])
-    def process_form(self):
+    @expose('/upload', methods=['POST'])
+    def upload_file(self):
         """
         Receives an upload request and saves the file to the upload folder.
         """
@@ -174,6 +174,27 @@ class AdminFileManagerView(AdminView):
         else:
             flash('File not received.')
         return redirect(url_for(self.endpoint + '.index'))
+
+    @expose('/delete', methods=['POST'])
+    def delete_file(self):
+        """
+        Receives a delete file request and deletes the file from the upload folder.
+        """
+
+        filename = request.form['filename']
+        if filename:
+            filename = secure_filename(filename)
+            file_path = os.path.join(PathsConfig.UPLOAD_FOLDER, filename)
+
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+                flash('File delete successfully.', 'info')
+            else:
+                flash('File "' + filename + '" was not found.')
+        else:
+            flash('Filename not received.')
+        return redirect(url_for(self.endpoint + '.index'))
+
 
     @expose('/', methods=['GET'])
     def index(self):
