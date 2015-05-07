@@ -52,7 +52,7 @@ class Authentication:
             if request.method != 'OPTIONS':
                 if not (login.current_user.is_authenticated()
                         or Authentication.check_authorization_dict(request.authorization)
-                        or Authentication.check_authorization_dict(request.json)):
+                        or Authentication.check_authorization_dict(request.get_json(silent=True))):
                     # return 403, not 401 to prevent browsers from displaying the default auth dialog
                     return make_response(jsonify({'Status': 'Unauthorized access.'}), 403)
             return f(*args, **kwargs)

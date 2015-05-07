@@ -1,0 +1,22 @@
+Note: For operations other than GET, authentication is required either by adding the credentials to
+an authentication header or to an json object attached to the request.
+
+base-api-url = <server-url>/api/<api-version>/apps
+
+REST API endpoints:
+Imported files:
+    base-imported = <base-api-url>/imported
+        Methods allowed:
+            GET - will return a list of imported files
+
+    imported-database = <base-imported>/<file-name>
+        Methods allowed:
+            GET - will return a list of root nodes from <file-name>, if database is valid
+
+    <imported-database>/<item-id>
+        Methods allowed:
+            GET - will return the item with the specified id, from the specified database
+
+    <imported-database>/<item-id>/children
+        Methods: allowed:
+            GET - will return the the list of direct children of the item with the specified id

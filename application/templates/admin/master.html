@@ -4,7 +4,8 @@
     {{ super() }}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/AdminStyle.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static', filename='libs/jquery-2.1.3.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/AdminMain.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/base.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/admin.js') }}"></script>
 {% endblock %}
 
 {% block access_control %}

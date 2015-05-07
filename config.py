@@ -31,6 +31,12 @@ class AppConfig(object):
     WTF_CSRF_ENABLED = False
     SECRET_KEY = "this is a secret key"
 
+    REST_URL_BASE = '/api/v1.0'
+    REST_URL_IMPORTED = REST_URL_BASE + '/imported'
+    REST_URL_IMPORTED_FILE = REST_URL_IMPORTED + '/<file_name>'
+    REST_URL_IMPORTED_ITEM = REST_URL_IMPORTED_FILE + '/<item_id>'
+    REST_URL_IMPORTED_ITEM_ATTR = REST_URL_IMPORTED_ITEM + '/<attr>'
+
     APP_NAME = 'XPy Bookmark Tools'
 
 

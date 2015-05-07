@@ -35,4 +35,4 @@ def check_errors():
     if Authentication.check_authorization('admin', 'password'):
         flash_once(default_user_present_error)
 
-from . import admin_views, main_views, forms
+from . import admin_views, main_views, forms, rest_resources

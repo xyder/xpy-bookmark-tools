@@ -159,7 +159,7 @@ class AdminFileManagerView(AdminView):
 
         params = {
             'file_list': file_list,
-            'selected_file': session[AdminFileManagerView.SELECTED]
+            'selected_file': session[AdminFileManagerView.SELECTED][0]
         }
 
         return self.render_template(params=params)

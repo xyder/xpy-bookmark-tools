@@ -17,9 +17,10 @@ db = SQLAlchemy(app)
 
 
 def main():
-    from application.utils.initializers import init_db, init_admin, init_login, init_app
+    from application.utils.initializers import init_db, init_admin, init_login, init_app, init_rest
     init_app(app)
     init_db(db)
     init_admin(app, db)
     init_login(app)
+    init_rest(app)
     app.run(use_reloader=False)

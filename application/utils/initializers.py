@@ -1,6 +1,7 @@
 import os
 from flask.ext.admin import Admin
 from flask.ext.login import LoginManager
+from flask.ext.restful import Api
 
 from application import views, models
 from config import ActiveConfig, PathsConfig
@@ -79,6 +80,20 @@ def init_admin(app, db):
     admin.add_view(views.admin_views.AdminFileManagerView(name='File Manager',
                                                           endpoint='file-manager',
                                                           template='admin/file_manager.html'))
+
+
+def init_rest(app):
+    """
+    Initializes Flask-Restful related objects and server resources.
+    :param app: The Flask instance.
+    """
+
+    rest_api = Api(app)
+    rest_api.add_resource(views.rest_resources.ImportedResource,
+                          ActiveConfig.REST_URL_IMPORTED,
+                          ActiveConfig.REST_URL_IMPORTED_FILE,
+                          ActiveConfig.REST_URL_IMPORTED_ITEM,
+                          ActiveConfig.REST_URL_IMPORTED_ITEM_ATTR)
 
 
 def init_app(app):

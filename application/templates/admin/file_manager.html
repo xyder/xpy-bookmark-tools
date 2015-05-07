@@ -26,7 +26,7 @@
                     </form>
                     <form class="icon" action="" method="POST">
                         <input id="filename" type="hidden" value="{{ file }}" name="filename">
-                        {% if params.selected_file[0] == file %}
+                        {% if params.selected_file == file %}
                         <button title="Select file">
                             <i class="icon-stop"></i>
                         </button>
@@ -44,5 +44,5 @@
         {% endfor %}
         </tbody>
     </table>
-    {{ params.selected_file[1] }}
+    {{ params.selected_file }}
 {% endblock %}
