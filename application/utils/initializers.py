@@ -1,7 +1,9 @@
 import os
+from flask import abort, send_file
 from flask.ext.admin import Admin
 from flask.ext.login import LoginManager
 from flask.ext.restful import Api
+from werkzeug.utils import secure_filename
 
 from application import views, models
 from config import ActiveConfig, PathsConfig
@@ -77,14 +79,18 @@ def init_admin(app, db):
                                                     db.session,
                                                     name='Access Levels',
                                                     endpoint='access-levels'))
-    admin.add_view(views.admin_views.AdminFileManagerView(name='File Manager',
-                                                          endpoint='file-manager',
-                                                          template='admin/file_manager.html'))
+
+    os.makedirs(PathsConfig.UPLOAD_FOLDER, exist_ok=True)
+    admin.add_view(views.admin_views.AdminImportedFilesView(PathsConfig.UPLOAD_FOLDER,
+                                                            '/imported_files/',
+                                                            endpoint='imported-files',
+                                                            name='Imported Files'))
 
 
 def init_rest(app):
     """
     Initializes Flask-Restful related objects and server resources.
+
     :param app: The Flask instance.
     """
 
@@ -96,6 +102,28 @@ def init_rest(app):
                           ActiveConfig.REST_URL_IMPORTED_ITEM_ATTR)
 
 
+def send_imported_file(filename):
+    """
+    View function that sends files from the upload directory.
+
+    :param filename: name of the file to be sent.
+
+    :return: the server response.
+    """
+    filename = secure_filename(filename)
+    file_path = os.path.join(PathsConfig.UPLOAD_FOLDER, filename)
+    if os.path.isfile(file_path):
+        return send_file(file_path, as_attachment=True)
+    else:
+        abort(404)
+
+
 def init_app(app):
-    # register views
-    app.add_url_rule('/', view_func=views.main_views.IndexView.as_view('index'))
+    """
+    Initializes the Flask application objects and registers the views.
+
+    :param app: The Flask instance.
+    """
+
+    app.add_url_rule('/', endpoint='index', view_func=views.main_views.IndexView.as_view('index'))
+    app.add_url_rule('/imported_files/<filename>', endpoint='imported_files', view_func=send_imported_file)

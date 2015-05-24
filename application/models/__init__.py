@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine
+from sqlalchemy.exc import DatabaseError
 from sqlalchemy.orm import sessionmaker
 from wtforms.widgets import TextInput
 
@@ -30,6 +31,18 @@ class DBManager():
                 raise Exception('Database is read-only.')
 
             self.session._flush = flush_patch
+
+    def is_valid(self):
+        """
+        Checks if it's an sqlite database.
+        """
+
+        self.engine.connect()
+        try:
+            self.engine.table_names()
+        except DatabaseError:
+            return False
+        return True
 
 from .access_level import AccessLevel
 from .user import User

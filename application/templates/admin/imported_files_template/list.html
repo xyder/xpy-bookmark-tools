@@ -1,0 +1,23 @@
+{% extends 'admin/file/list.html' %}
+
+{# style the actions row to accommodate the new download button  #}
+{% block list_header scoped %}
+    {% if actions %}
+    <th class="span1">
+        <input type="checkbox" name="rowtoggle" class="action-rowtoggle" />
+    </th>
+    {% endif %}
+    <th class="span1" style="width: 50px">&nbsp;</th>
+    <th>{{ _gettext('Name') }}</th>
+    <th>{{ _gettext('Size') }}</th>
+{% endblock %}
+
+{# insert download button for all rows #}
+{% block list_row_actions scoped %}
+    {{ super() }}
+    {% if not is_dir and admin_view.can_download and path and name != '..' %}
+        <a class="icon" href="{{ get_url('.download', path=path) }}">
+                <i class="icon-download-alt"></i>
+        </a>
+    {% endif %}
+{% endblock %}
